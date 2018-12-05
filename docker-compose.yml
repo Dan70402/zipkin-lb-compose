@@ -1,0 +1,73 @@
+# This file uses the version 2 docker-compose file format, described here:
+# https://docs.docker.com/compose/compose-file/#version-2
+#
+# It extends the default configuration from docker-compose.yml to run the
+# zipkin-elasticsearch container instead of the zipkin-mysql container.
+
+version: '2'
+
+services:
+  zipkin-one:
+    image: openzipkin/zipkin:latest
+    container_name: zipkin-one
+    environment:
+      - STORAGE_TYPE=elasticsearch
+      - ES_HOSTS=http://192.168.16.54:9200
+      - JAVA_OPTS=-Dlogging.level.zipkin=DEBUG -Dlogging.level.zipkin2=DEBUG
+    networks:
+      - zipkin
+  zipkin-two:
+    image: openzipkin/zipkin:latest
+    container_name: zipkin-two
+    environment:
+      - STORAGE_TYPE=elasticsearch
+      - ES_HOSTS=http://192.168.16.54:9200
+      - JAVA_OPTS=-Dlogging.level.zipkin=DEBUG -Dlogging.level.zipkin2=DEBUG
+    networks:
+      - zipkin
+  zipkin-three:
+    image: openzipkin/zipkin:latest
+    container_name: zipkin-three
+    environment:
+      - STORAGE_TYPE=elasticsearch
+      - ES_HOSTS=http://192.168.16.54:9200
+      - JAVA_OPTS=-Dlogging.level.zipkin=DEBUG -Dlogging.level.zipkin2=DEBUG
+    networks:
+      - zipkin
+  zipkin-four:
+    image: openzipkin/zipkin:latest
+    container_name: zipkin-four
+    environment:
+      - STORAGE_TYPE=elasticsearch
+      - ES_HOSTS=http://192.168.16.54:9200
+      - JAVA_OPTS=-Dlogging.level.zipkin=DEBUG -Dlogging.level.zipkin2=DEBUG
+    networks:
+      - zipkin
+  zipkin-five:
+    image: openzipkin/zipkin:latest
+    container_name: zipkin-five
+    environment:
+      - STORAGE_TYPE=elasticsearch
+      - ES_HOSTS=http://192.168.16.54:9200
+      - JAVA_OPTS=-Dlogging.level.zipkin=DEBUG -Dlogging.level.zipkin2=DEBUG
+    networks:
+      - zipkin
+  haproxy:
+    build:
+      dockerfile: Dockerfile
+      context: ./
+    depends_on:
+      - zipkin-one
+      - zipkin-two
+      - zipkin-three
+      - zipkin-four
+      - zipkin-five
+    ports:
+      - 9411:9411
+      - 1936:1936
+    networks:
+      - zipkin
+
+networks:
+  zipkin:
+    driver: bridge
